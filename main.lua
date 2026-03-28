@@ -15,6 +15,8 @@ function _init()
  ai_move=nil -- best move found
  ai_thinking=false
  ai_nodes=0
+ last_move=nil -- {fx,fy,tx,ty} for last move indicator
+ flash=nil -- capture flash effect
 end
 
 -- board helpers
@@ -45,6 +47,8 @@ function init_board()
  ai_co=nil
  ai_move=nil
  ai_thinking=false
+ last_move=nil
+ flash=nil
 end
 
 -- cell size and offset for centering
@@ -98,12 +102,17 @@ end
 
 -- execute a move
 function do_move(fx,fy,tx,ty)
+ sfx(1) -- capture sound
+ -- flash on captured square
+ flash={x=tx,y=ty,t=0,dur=8}
+ last_move={fx=fx,fy=fy,tx=tx,ty=ty}
  bset(tx,ty,bget(fx,fy))
  bset(fx,fy,0)
  turn=3-turn
  if not has_moves(turn) then
   winner=3-turn
   state=4
+  sfx(3) -- win fanfare
  end
 end
 
@@ -279,8 +288,8 @@ end
 
 -- mode select
 function update_mode()
- if btnp(2) then msel=max(0,msel-1) end
- if btnp(3) then msel=min(2,msel+1) end
+ if btnp(2) then msel=max(0,msel-1); sfx(4) end
+ if btnp(3) then msel=min(2,msel+1); sfx(4) end
  if btnp(4) then
   gmode=msel
   state=2
@@ -291,8 +300,8 @@ end
 
 -- board size select
 function update_size()
- if btnp(2) then msel=max(0,msel-1) end
- if btnp(3) then msel=min(1,msel+1) end
+ if btnp(2) then msel=max(0,msel-1); sfx(4) end
+ if btnp(3) then msel=min(1,msel+1); sfx(4) end
  if btnp(4) then
   if msel==0 then
    bw,bh=5,6
@@ -334,6 +343,12 @@ function update_play()
   my_color=gpio_get(1)
   gpio_set(20,2) -- hide overlay
   gpio_set(15,2) -- playing
+ end
+
+ -- flash effect
+ if flash then
+  flash.t+=1
+  if flash.t>=flash.dur then flash=nil end
  end
 
  -- animation
@@ -394,6 +409,7 @@ function update_play()
    local sx=sel[1]
    local sy=sel[2]
    if is_legal(sx,sy,cx,cy) then
+    sfx(0) -- select/confirm
     -- start animation
     anim={fx=sx,fy=sy,tx=cx,ty=cy,t=0,dur=6}
     -- online: send move to opponent
@@ -405,9 +421,13 @@ function update_play()
     -- select different piece
     local t=get_targets(cx,cy)
     if #t>0 then
+     sfx(0) -- select
      sel={cx,cy}
+    else
+     sfx(2) -- no moves
     end
    else
+    sfx(2) -- invalid
     sel=nil
    end
   else
@@ -415,7 +435,10 @@ function update_play()
    if bget(cx,cy)==turn then
     local t=get_targets(cx,cy)
     if #t>0 then
+     sfx(0) -- select
      sel={cx,cy}
+    else
+     sfx(2) -- no moves
     end
    end
   end
@@ -451,10 +474,30 @@ function _draw()
 end
 
 function draw_title()
- local col=7
- print("clobber",42,30,col)
- print("a combinatorial game",14,42,6)
- print("\x8e/\x97 to start",34,80,col)
+ -- animated decorative pieces
+ local tt=t()
+ for i=0,5 do
+  local px=20+i*18
+  local py=18+sin(tt*0.3+i*0.15)*4
+  if i%2==0 then
+   circfill(px,py,5,0)
+   circ(px,py,5,5)
+  else
+   circfill(px,py,5,7)
+   circ(px,py,5,6)
+  end
+ end
+
+ -- title
+ print("clobber",30,38,7)
+ -- underline
+ line(30,46,73,46,5)
+
+ print("a combinatorial game",14,52,6)
+
+ -- mode hints
+ print("\x8e/\x97 to start",34,80,7)
+ print("v1.0",52,120,5)
 end
 
 function draw_mode()
@@ -500,6 +543,9 @@ function draw_play()
   print(tname.."'s turn",2,2,7)
  end
 
+ -- board frame
+ rect(ox-1,oy-1,ox+bw*cs,oy+bh*cs,5)
+
  -- board background
  for y=0,bh-1 do
   for x=0,bw-1 do
@@ -511,6 +557,13 @@ function draw_play()
   end
  end
 
+ -- last move indicator
+ if last_move and not anim then
+  local lx=ox+last_move.tx*cs
+  local ly=oy+last_move.ty*cs
+  rect(lx+1,ly+1,lx+cs-2,ly+cs-2,2)
+ end
+
  -- legal move indicators (if piece selected)
  if sel and not anim then
   local targets=get_targets(sel[1],sel[2])
@@ -519,6 +572,15 @@ function draw_play()
    local sy=oy+t[2]*cs+flr(cs/2)
    circfill(sx,sy,2,8)
   end
+ end
+
+ -- capture flash effect
+ if flash then
+  local fx=ox+flash.x*cs
+  local fy=oy+flash.y*cs
+  local fc=7
+  if flash.t>flash.dur/2 then fc=6 end
+  rectfill(fx,fy,fx+cs-1,fy+cs-1,fc)
  end
 
  -- pieces
@@ -565,6 +627,21 @@ function draw_play()
   if t()%0.5<0.25 then fc=9 end
   rect(sx,sy,sx+cs-1,sy+cs-1,fc)
  end
+
+ -- piece counts
+ local bc,wc=0,0
+ for i=1,#board do
+  if board[i]==1 then bc+=1
+  elseif board[i]==2 then wc+=1
+  end
+ end
+ local by=oy+bh*cs+3
+ circfill(ox+2,by+2,2,0)
+ circ(ox+2,by+2,2,5)
+ print(bc,ox+7,by,7)
+ circfill(ox+bw*cs-4,by+2,2,7)
+ circ(ox+bw*cs-4,by+2,2,6)
+ print(wc,ox+bw*cs+1,by,7)
 end
 
 function draw_over()
@@ -574,9 +651,25 @@ function draw_over()
  else
   msg="white wins!"
  end
+ if gmode==2 then
+  if winner==my_color then
+   msg="you win!"
+  else
+   msg="you lose!"
+  end
+ elseif gmode==1 then
+  if winner==1 then
+   msg="you win!"
+  else
+   msg="computer wins!"
+  end
+ end
  -- draw box behind text
- rectfill(20,50,108,76,0)
- rect(20,50,108,76,7)
- print(msg,38,56,7)
- print("\x8e/\x97 menu",40,66,6)
+ local tw=#msg*4
+ local bx1=64-tw/2-8
+ local bx2=64+tw/2+8
+ rectfill(bx1,48,bx2,78,0)
+ rect(bx1,48,bx2,78,7)
+ print(msg,64-tw/2,54,7)
+ print("\x8e/\x97 menu",40,68,6)
 end
