@@ -118,10 +118,67 @@ if __name__ == "__main__":
         N('c',2,0,4,5), R(), R(), R(),
     ])
 
+    # --- In-game music SFX (12-13) ---
+    # A minor, slow and contemplative, single channel
+    # Triangle wave, low volume, speed 16
+
+    # SFX 12: Game melody A
+    sfx_12 = sfx_line(16, [
+        N('e',3,0,4), N('c',3,0,3), N('d',3,0,4), N('e',3,0,3),
+        N('c',3,0,4), N('a',2,0,3), R(), R(),
+        N('c',3,0,4), N('d',3,0,3), N('e',3,0,4), N('g',3,0,3),
+        N('e',3,0,4), N('d',3,0,3), N('c',3,0,4,5), R(),
+        N('a',2,0,4), N('c',3,0,3), N('e',3,0,4), N('d',3,0,3),
+        N('c',3,0,4), N('a',2,0,3,5), R(), R(),
+        N('c',3,0,4), N('d',3,0,3), N('c',3,0,4), N('a',2,0,3),
+        N('a',2,0,2,5), R(), R(), R(),
+    ])
+
+    # SFX 13: Game melody B
+    sfx_13 = sfx_line(16, [
+        N('e',3,0,4), N('g',3,0,3), N('a',3,0,4), N('g',3,0,3),
+        N('e',3,0,4), N('d',3,0,3), N('c',3,0,4,5), R(),
+        N('d',3,0,4), N('e',3,0,3), N('g',3,0,4), N('e',3,0,3),
+        N('d',3,0,3), N('c',3,0,3), N('a',2,0,3,5), R(),
+        N('c',3,0,4), N('d',3,0,3), N('e',3,0,4), N('c',3,0,3),
+        N('a',2,0,3,5), R(), R(), R(),
+        N('c',3,0,3), N('d',3,0,3), N('c',3,0,3), N('a',2,0,3),
+        N('a',2,0,2,5), R(), R(), R(),
+    ])
+
+    # --- In-game music SFX (14-15) ---
+    # D minor, slow and tense, single channel
+    # Phaser wave (7), low volume, speed 20
+
+    # SFX 14: Game melody A - sparse, eerie
+    sfx_14 = sfx_line(20, [
+        N('d',2,7,3), R(), R(), R(),
+        N('a',2,7,3), R(), N('a',2,7,2,5), R(),
+        N('f',2,7,3), R(), R(), R(),
+        N('e',2,7,3), R(), N('e',2,7,2,5), R(),
+        N('d',2,7,3), R(), R(), R(),
+        N('f',2,7,3), R(), N('g',2,7,3), R(),
+        N('f',2,7,2), N('e',2,7,2), N('d',2,7,2,5), R(),
+        R(), R(), R(), R(),
+    ])
+
+    # SFX 15: Game melody B - responds
+    sfx_15 = sfx_line(20, [
+        N('a',2,7,3), R(), R(), R(),
+        N('g',2,7,3), R(), N('f',2,7,2,5), R(),
+        R(), R(), N('d',2,7,3), R(),
+        N('e',2,7,3), N('f',2,7,3), N('e',2,7,2,5), R(),
+        R(), R(), N('a',1,7,3), R(),
+        N('d',2,7,3), R(), R(), R(),
+        N('d',2,7,2,5), R(), R(), R(),
+        R(), R(), R(), R(),
+    ])
+
     # Print all
     all_sfx = [sfx_0, sfx_1, sfx_2, sfx_3, sfx_4,
                None, None, None,  # 5-7 unused
-               sfx_8, sfx_9, sfx_10, sfx_11]
+               sfx_8, sfx_9, sfx_10, sfx_11,
+               sfx_12, sfx_13, sfx_14, sfx_15]
 
     print("__sfx__")
     for i, s in enumerate(all_sfx):
@@ -133,5 +190,9 @@ if __name__ == "__main__":
 
     print()
     print("__music__")
-    print("01 080a4141  -- pattern 0: melody A + bass A (loop start)")
-    print("02 090b4141  -- pattern 1: melody B + bass B (loop end)")
+    print("01 080a4141  -- pattern 0: title melody A + bass A (loop start)")
+    print("02 090b4141  -- pattern 1: title melody B + bass B (loop end)")
+    print("01 0c414141  -- pattern 2: game melody A - contemplative (loop start)")
+    print("02 0d414141  -- pattern 3: game melody B - contemplative (loop end)")
+    print("01 0e414141  -- pattern 4: game melody A - tense (loop start)")
+    print("02 0f414141  -- pattern 5: game melody B - tense (loop end)")

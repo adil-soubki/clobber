@@ -29,7 +29,7 @@ function bset(x,y,v)
 end
 
 function init_board()
- music(-1) -- stop title music
+ music(4) -- start game music
  board={}
  for y=0,bh-1 do
   for x=0,bw-1 do
@@ -113,6 +113,7 @@ function do_move(fx,fy,tx,ty)
  if not has_moves(turn) then
   winner=3-turn
   state=4
+  music(-1) -- stop game music
   sfx(3) -- win fanfare
  end
 end
