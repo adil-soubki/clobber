@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clobber</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <!--
+      PICO-8 web export: after exporting your .p8 cart via PICO-8's
+      "export main.html" command, copy the <canvas> and <script> tags
+      from the exported HTML into this container.
+
+      The exported JS will create window.pico8_gpio automatically.
+
+      For now, this is a placeholder. Replace the comment below with
+      the PICO-8 export contents.
+    -->
+    <canvas id="canvas" width="512" height="512"
+      style="width:512px;height:512px;image-rendering:pixelated;image-rendering:crisp-edges;">
+    </canvas>
+
+    <!-- Online play overlay -->
+    <div id="overlay">
+      <div id="room-panel">
+        <h2>Online Play</h2>
+        <button id="host-btn">Create Room</button>
+        <p id="room-code-display">
+          Room Code: <span id="room-code"></span>
+        </p>
+        <hr>
+        <input id="join-input" placeholder="CODE" maxlength="4">
+        <button id="join-btn">Join Room</button>
+        <p id="status-text"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PeerJS from CDN -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <!-- GPIO bridge + PeerJS wrapper -->
+  <script src="wrapper.js"></script>
+</body>
+</html>
