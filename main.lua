@@ -29,6 +29,7 @@ function bset(x,y,v)
 end
 
 function init_board()
+ music(-1) -- stop title music
  board={}
  for y=0,bh-1 do
   for x=0,bw-1 do
@@ -280,7 +281,12 @@ end
 
 -- title screen
 function update_title()
+ if not music_started then
+  music(0)
+  music_started=true
+ end
  if btnp(4) or btnp(5) then
+  sfx(0)
   state=1
   msel=0
  end
@@ -291,11 +297,12 @@ function update_mode()
  if btnp(2) then msel=max(0,msel-1); sfx(4) end
  if btnp(3) then msel=min(2,msel+1); sfx(4) end
  if btnp(4) then
+  sfx(0)
   gmode=msel
   state=2
   msel=0
  end
- if btnp(5) then state=0 end
+ if btnp(5) then sfx(0); state=0 end
 end
 
 -- board size select
@@ -303,6 +310,7 @@ function update_size()
  if btnp(2) then msel=max(0,msel-1); sfx(4) end
  if btnp(3) then msel=min(1,msel+1); sfx(4) end
  if btnp(4) then
+  sfx(0)
   if msel==0 then
    bw,bh=5,6
   else
@@ -317,7 +325,7 @@ function update_size()
   init_board()
   state=3
  end
- if btnp(5) then state=1; msel=gmode end
+ if btnp(5) then sfx(0); state=1; msel=gmode end
 end
 
 -- gameplay
@@ -454,6 +462,7 @@ function update_over()
  if btnp(4) or btnp(5) then
   state=0
   msel=0
+  music_started=false
  end
 end
 
@@ -489,15 +498,15 @@ function draw_title()
  end
 
  -- title
- print("clobber",30,38,7)
+ print("clobber",50,38,7)
  -- underline
- line(30,46,73,46,5)
+ line(50,46,77,46,5)
 
- print("a combinatorial game",14,52,6)
+ print("a combinatorial game",24,52,6)
 
  -- mode hints
- print("\x8e/\x97 to start",34,80,7)
- print("v1.0",52,120,5)
+ print("\x8e/\x97 to start",40,80,7)
+ print("v1.0",56,120,5)
 end
 
 function draw_mode()
