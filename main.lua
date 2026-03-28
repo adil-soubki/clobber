@@ -406,10 +406,10 @@ function update_play()
  end
 
  -- cursor movement
- if btnp(0) then cx=max(0,cx-1) end
- if btnp(1) then cx=min(bw-1,cx+1) end
- if btnp(2) then cy=max(0,cy-1) end
- if btnp(3) then cy=min(bh-1,cy+1) end
+ if btnp(0) then cx=max(0,cx-1); sfx(4) end
+ if btnp(1) then cx=min(bw-1,cx+1); sfx(4) end
+ if btnp(2) then cy=max(0,cy-1); sfx(4) end
+ if btnp(3) then cy=min(bh-1,cy+1); sfx(4) end
 
  if btnp(4) then -- confirm
   if sel then
