@@ -3,6 +3,19 @@
 (function () {
   "use strict";
 
+  // ICE server config for WebRTC
+  var peerConfig = {
+    config: {
+      iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" },
+        { urls: "stun:stun2.l.google.com:19302" },
+        { urls: "stun:stun3.l.google.com:19302" },
+        { urls: "stun:stun4.l.google.com:19302" },
+      ],
+    },
+  };
+
   // GPIO array is exposed by PICO-8's web export
   // pico8_gpio is a 128-element array shared with the cart
   let peer = null;
@@ -90,7 +103,7 @@
     setStatus("Creating room...");
     hostBtn.disabled = true;
 
-    peer = new Peer(peerId);
+    peer = new Peer(peerId, peerConfig);
     isHost = true;
 
     peer.on("open", function () {
@@ -129,7 +142,7 @@
     setStatus("Connecting...");
     joinBtn.disabled = true;
 
-    peer = new Peer();
+    peer = new Peer(peerConfig);
 
     peer.on("open", function () {
       const c = peer.connect(peerId);
