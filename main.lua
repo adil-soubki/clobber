@@ -30,7 +30,7 @@ function bset(x,y,v)
 end
 
 function init_board()
- music(4) -- start game music
+ music(2) -- start game music
  board={}
  for y=0,bh-1 do
   for x=0,bw-1 do
