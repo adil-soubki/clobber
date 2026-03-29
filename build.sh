@@ -11,7 +11,7 @@ if [ ! -f clobber.html ]; then
 fi
 
 # Prevent double-patching
-if grep -q 'wrapper.js' clobber.html; then
+if grep -q 'room-panel' clobber.html; then
   echo "Error: clobber.html is already patched. Re-export from PICO-8 first."
   exit 1
 fi
@@ -41,9 +41,13 @@ sed -i '' 's|</canvas>|</canvas>\
 					</div>\
 				</div>|' clobber.html
 
-# Inject PeerJS and wrapper.js before </body>
-sed -i '' 's|</body>|<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>\
-<script src="wrapper.js"></script>\
-</body>|' clobber.html
+# Inject PeerJS and inline wrapper.js before </body>
+python3 -c "
+html = open('clobber.html').read()
+wrapper = open('wrapper.js').read()
+inject = '<script src=\"https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js\"></script>\n<script>' + wrapper + '</script>\n'
+html = html.replace('</body>', inject + '</body>')
+open('clobber.html', 'w').write(html)
+"
 
 echo "Done! clobber.html patched with online multiplayer support."
