@@ -453,6 +453,8 @@ function update_play()
     else
      sfx(2) -- no moves
     end
+   else
+    sfx(2) -- wrong piece
    end
   end
  end
