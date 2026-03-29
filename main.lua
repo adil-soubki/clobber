@@ -515,27 +515,27 @@ function draw_title()
 end
 
 function draw_mode()
- print("select mode",32,20,7)
+ print("select mode",42,20,7)
  local opts={"vs human","vs computer","online"}
  for i=0,2 do
   local c=6
   if i==msel then c=7 end
   local pre="  "
   if i==msel then pre="> " end
-  print(pre..opts[i+1],30,44+i*12,c)
+  print(pre..opts[i+1],38,44+i*12,c)
  end
  print("\x97 back",48,100,5)
 end
 
 function draw_size()
- print("board size",34,20,7)
+ print("board size",44,20,7)
  local opts={"5 x 6","8 x 8"}
  for i=0,1 do
   local c=6
   if i==msel then c=7 end
   local pre="  "
   if i==msel then pre="> " end
-  print(pre..opts[i+1],38,50+i*12,c)
+  print(pre..opts[i+1],46,50+i*12,c)
  end
  print("\x97 back",48,100,5)
 end
