@@ -15,6 +15,7 @@ function _init()
  ai_move=nil -- best move found
  ai_thinking=false
  ai_nodes=0
+ ai_tick_t=0
  last_move=nil -- {fx,fy,tx,ty} for last move indicator
  flash=nil -- capture flash effect
 end
@@ -206,7 +207,7 @@ function minimax(depth,alpha,beta,cp,aip)
    bset(m[3],m[4],bget(m[1],m[2]))
    bset(m[1],m[2],0)
    ai_nodes+=1
-   if ai_nodes%150==0 then yield() end
+   if ai_nodes%50==0 then yield() end
    local score=minimax(depth-1,alpha,beta,3-cp,aip)
    -- unmake
    bset(m[1],m[2],bget(m[3],m[4]))
@@ -241,9 +242,10 @@ function start_ai()
  ai_thinking=true
  ai_move=nil
  ai_nodes=0
+ ai_tick_t=0
  local aip=turn
- local depth=4
- if bw>=8 then depth=3 end
+ local depth=3
+ if bw>=8 then depth=2 end
  ai_co=cocreate(function()
   local moves=gen_moves(aip)
   local best_score=-9999
@@ -376,6 +378,8 @@ function update_play()
 
  -- ai thinking
  if ai_thinking then
+  ai_tick_t+=1
+  if ai_tick_t%3==0 then sfx(5) end
   for i=1,8 do
    if costatus(ai_co)=="dead" then
     ai_thinking=false
