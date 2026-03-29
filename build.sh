@@ -1,12 +1,18 @@
 #!/bin/bash
 # Patches the PICO-8 HTML export with online multiplayer overlay and scripts.
-# Usage: After running `export main.html` in PICO-8, run this script.
+# Usage: After running `export clobber.html` in PICO-8, run this script.
 
 set -e
 cd "$(dirname "$0")"
 
-if [ ! -f main.html ]; then
-  echo "Error: main.html not found. Export from PICO-8 first."
+if [ ! -f clobber.html ]; then
+  echo "Error: clobber.html not found. Export from PICO-8 first."
+  exit 1
+fi
+
+# Prevent double-patching
+if grep -q 'wrapper.js' clobber.html; then
+  echo "Error: clobber.html is already patched. Re-export from PICO-8 first."
   exit 1
 fi
 
@@ -33,11 +39,11 @@ sed -i '' 's|</canvas>|</canvas>\
 							font-family:monospace; font-size:14px; cursor:pointer; border-radius:4px; margin-left:4px;">Join</button>\
 						<p id="status-text" style="margin-top:12px; font-size:12px; color:#83769c;"></p>\
 					</div>\
-				</div>|' main.html
+				</div>|' clobber.html
 
 # Inject PeerJS and wrapper.js before </body>
 sed -i '' 's|</body>|<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>\
 <script src="wrapper.js"></script>\
-</body>|' main.html
+</body>|' clobber.html
 
-echo "Done! main.html patched with online multiplayer support."
+echo "Done! clobber.html patched with online multiplayer support."

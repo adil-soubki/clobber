@@ -98,6 +98,7 @@
   }
 
   hostBtn.addEventListener("click", function () {
+    if (peer) { peer.destroy(); peer = null; }
     roomCode = generateCode();
     const peerId = "CLOB-" + roomCode;
     setStatus("Creating room...");
