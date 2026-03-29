@@ -552,7 +552,8 @@ function draw_play()
  if gmode==2 and gpio_get(0)==1 then
   print("waiting for opponent...",2,2,7)
  elseif ai_thinking then
-  print(tname.." thinking...",2,2,7)
+  local dots=sub("...",1,flr(ai_tick_t/5)%3+1)
+  print(tname.." thinking"..dots,2,2,7)
  elseif gmode==2 and turn!=my_color then
   print("opponent's turn",2,2,7)
  else
