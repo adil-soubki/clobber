@@ -57,12 +57,12 @@ end
 function cell_info()
  local cs
  if bw==5 and bh==6 then
-  cs=16
+  cs=15
  else
-  cs=14
+  cs=13
  end
  local ox=flr((128-bw*cs)/2)
- local oy=flr((128-bh*cs)/2)+6 -- +6 for status bar
+ local oy=flr((128-bh*cs)/2)+2 -- +2 for status bar
  return cs,ox,oy
 end
 
@@ -617,10 +617,10 @@ function draw_play()
     -- draw piece
     if v==1 then
      circfill(sx,sy,pr,0)
-     circ(sx,sy,pr,5)
+     circ(sx,sy,pr,0)
     else
      circfill(sx,sy,pr,7)
-     circ(sx,sy,pr,6)
+     circ(sx,sy,pr,7)
     end
    end
   end
@@ -650,12 +650,16 @@ function draw_play()
   end
  end
  local by=oy+bh*cs+3
+ -- black score: count then circle (right-aligned to left edge)
+ local bctxt=""..bc
+ local bcw=#bctxt*4
+ print(bctxt,ox-bcw-1,by,7)
  circfill(ox+2,by+2,2,0)
  circ(ox+2,by+2,2,5)
- print(bc,ox+7,by,7)
- circfill(ox+bw*cs-4,by+2,2,7)
- circ(ox+bw*cs-4,by+2,2,6)
- print(wc,ox+bw*cs+1,by,7)
+ -- white score: circle then count (left-aligned to right edge)
+ circfill(ox+bw*cs-3,by+2,2,7)
+ circ(ox+bw*cs-3,by+2,2,6)
+ print(wc,ox+bw*cs+2,by,7)
 end
 
 function draw_over()
@@ -679,11 +683,11 @@ function draw_over()
   end
  end
  -- draw box behind text
- local tw=#msg*4
- local bx1=64-tw/2-8
- local bx2=64+tw/2+8
+ local tw=max(#msg*4,32)
+ local bx1=63-tw/2-9
+ local bx2=63+tw/2+9
  rectfill(bx1,48,bx2,78,0)
  rect(bx1,48,bx2,78,7)
- print(msg,64-tw/2,54,7)
- print("\x8e/\x97 menu",40,68,6)
+ print(msg,64-#msg*2,54,7)
+ print("\x8e/\x97 menu",44,68,6)
 end
